@@ -1,0 +1,46 @@
+# https://stackoverflow.com/questions/33323837/database-application-yml-for-spring-boot-from-applications-properties
+
+server:
+  port: 32100
+  servlet:
+    session:
+      cookie:
+        http-only: true
+        secure: true
+
+external:
+  dict:
+    jmdict_path: ./dict/JMdict_e
+    kanjidict_path: ./dict/kanjidic2.xml
+  notes_path: ./メモ.shirabe
+
+# https://www.baeldung.com/spring-data-jpa-multiple-databases
+# https://stackoverflow.com/questions/45409196/how-to-make-spring-server-to-start-even-if-database-is-down
+spring:
+  inmemdb: false
+  dangerous-mode: true
+  allowed-origins: ${ALLOWED_ORIGIN} # comma separated
+  jpa:
+    show-sql: false
+  session:
+    store-type: jdbc
+  data:
+    postgres:
+      hikari:
+        connectionTimeout: 20000
+        maximumPoolSize: 5
+      # if you create DataSource by code, use "jdbcUrl" instead of "url"
+      jdbcUrl: jdbc:postgresql://database.service.jisho:5432/jishonotes
+      username: ${POSTGRES_USER}
+      password: ${POSTGRES_PASSWORD}
+      continue-on-error: true
+    elastic:
+      # elastic search is not implemented yet.
+      host: elastic.service.jisho
+      port: 9200
+      username: ${ELASTIC_USERNAME}
+      password: ${ELASTIC_PASSWORD}
+      jishonotes-index:
+        indexPath: ./elastic_indexes/jishonotes_index.json
+        indexName: jp_text_search
+        analyzers: ["normal_analyzer", "nocompound_analyzer", "preserve_original"]

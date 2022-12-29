@@ -1,0 +1,40 @@
+plugins {
+    id 'org.springframework.boot' version '2.7.2'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'java'
+}
+
+group = 'com.vincentcodes'
+//version = '1.2.0'
+sourceCompatibility = '11'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+//    implementation 'org.apache.commons:commons-lang3:3.12.0'
+//    implementation 'org.apache.commons:commons-collections4:4.4'
+
+    implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.session:spring-session-jdbc'
+    implementation 'org.springframework.data:spring-data-elasticsearch:4.4.1'
+    implementation 'com.h2database:h2'
+    implementation 'org.postgresql:postgresql'
+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.13.3'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+//compileJava.options.encoding = 'UTF-8'
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+}
+
+tasks.named('test') {
+    // https://github.com/maiflai/gradle-scalatest/issues/88
+    jvmArgs '-Dfile.encoding=UTF-8'
+    useJUnitPlatform()
+}
