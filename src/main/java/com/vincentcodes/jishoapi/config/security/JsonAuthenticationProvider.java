@@ -14,10 +14,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Configuration
 public class JsonAuthenticationProvider implements AuthenticationProvider {
     @Autowired
-    SimpleUserDetailsService realCredRetrievalService;
+    private SimpleUserDetailsService realCredRetrievalService;
 
     @Autowired
-    PasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
@@ -30,7 +30,7 @@ public class JsonAuthenticationProvider implements AuthenticationProvider {
         if(!passwordEncoder.matches(clientAuthInfo.getPass(), realCredentials.getPassword()))
             throw new BadCredentialsException("Invalid name or password");
 
-        // ignore authorizing GrantAuthorities (or roles)
+        // ignore authorizing GrantAuthorities (or roles) and return
         return new UsernamePasswordAuthenticationToken(realCredentials, realCredentials.getPassword(), realCredentials.getAuthorities());
     }
 

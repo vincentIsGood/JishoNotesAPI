@@ -6,9 +6,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
-//@CrossOrigin
-//@RestController
-//@RequestMapping("jishonotes/v1/games")
+@Deprecated
+@CrossOrigin
+@RestController
+@RequestMapping("jishonotes/v1/games")
 public class CardReviewGameController {
     // create
     @GetMapping("/create")

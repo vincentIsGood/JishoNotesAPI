@@ -1,0 +1,8 @@
+# https://www.baeldung.com/spring-profiles
+# https://www.springcloud.io/post/2022-04/spring-samesite/#gsc.tab=0
+
+server:
+  servlet:
+    session:
+      cookie:
+        same-site: none

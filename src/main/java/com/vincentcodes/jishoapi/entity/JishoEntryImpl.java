@@ -1,9 +1,12 @@
 package com.vincentcodes.jishoapi.entity;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.vincentcodes.jishoapi.entity.jmdict.RawJishoEntry;
+
 import java.util.Arrays;
 
 /**
- * @see DetailedJishoEntry
+ * @see JishoEntryDetailed
  */
 @Deprecated
 public class JishoEntryImpl implements JishoEntry{
@@ -19,18 +22,27 @@ public class JishoEntryImpl implements JishoEntry{
         this.meanings = meanings;
     }
 
+    @Override
     public int getSequence() {
         return sequence;
     }
 
+    @Override
+    public RawJishoEntry getEntry() {
+        return null;
+    }
+
+    @Override
     public String[] getHeadword() {
         return headword;
     }
 
+    @Override
     public String[] getReadings() {
         return readings;
     }
 
+    @Override
     public String[] getMeanings() {
         return meanings;
     }

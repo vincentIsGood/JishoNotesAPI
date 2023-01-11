@@ -2,10 +2,11 @@ package com.vincentcodes.jishoapi.config;
 
 import com.vincentcodes.jishoapi.config.consts.ApiEndpoints;
 import com.vincentcodes.jishoapi.config.security.JsonAuthenticationFilter;
+import com.vincentcodes.jishoapi.config.security.JsonAuthorizationHeaderWriter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
@@ -17,8 +18,11 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.util.List;
 
 /**
+ * Web security for this application is done here.
+ *
  * <p>
  * NEW: Migration from {@code WebSecurityConfigurerAdapter} to Component-based configuration
+ * <p>
  * OLD: https://github.com/spring-projects/spring-data-examples/tree/master/rest/security
  *
  * <p>
@@ -41,6 +45,7 @@ public class WebSecurityConfig {
     public CorsConfigurationSource corsConfigurationSource(){
         CorsConfiguration config = new CorsConfiguration();
         config.applyPermitDefaultValues();
+        config.setAllowCredentials(true);
         config.setAllowedOrigins(List.of(allowedOrigins));
         config.setAllowedMethods(List.of("*"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
@@ -51,16 +56,18 @@ public class WebSecurityConfig {
     // For CORS, see https://stackoverflow.com/questions/54276986/spring-boot-security-no-access-control-allow-origin-header-when-setting-allow
     //           CrossOrigin works when the "Origin" header exists in the request.
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http, AuthenticationManager authenticationManager) throws Exception{
+    public SecurityFilterChain filterChain(HttpSecurity http, JsonAuthenticationFilter jsonAuthenticationFilter) throws Exception{
         // Do not create session on 401
         // https://stackoverflow.com/questions/70769950/prevent-unauthorized-http-requests-redirected-to-error-from-setting-session-coo
         HttpSessionRequestCache httpSessionRequestCache = new HttpSessionRequestCache();
         httpSessionRequestCache.setCreateSessionAllowed(false);
 
-        // ".and().cors()" override all CrossOrigin policies (for production use only)
+        // ".and().cors()" enable cors with our CorsConfigurationSource
         // ".and().csrf().disable()" for the moment
         // ".anyRequest().authenticated()" any request must be authenticated
-        http.httpBasic()
+        http.headers()
+                .addHeaderWriter(new JsonAuthorizationHeaderWriter())
+            .and().httpBasic()
                 .and().cors()
                 .and().csrf().disable()
                 .requestCache().requestCache(httpSessionRequestCache)
@@ -72,7 +79,7 @@ public class WebSecurityConfig {
                 .anyRequest().authenticated()
                 .and().logout()
                     .logoutRequestMatcher(ApiEndpoints.LOGOUT)
-                .and().addFilter(new JsonAuthenticationFilter(ApiEndpoints.LOGIN, authenticationManager));
+                .and().addFilter(jsonAuthenticationFilter);
         //http.addFilterAfter(new AppSessionAuthFilter(), BasicAuthenticationFilter.class);
         return http.build();
     }

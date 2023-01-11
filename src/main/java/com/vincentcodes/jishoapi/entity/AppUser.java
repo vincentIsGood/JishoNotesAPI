@@ -2,17 +2,24 @@ package com.vincentcodes.jishoapi.entity;
 
 import com.vincentcodes.jishoapi.utils.DtoAsWell;
 import org.hibernate.annotations.Type;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.io.Serializable;
 import java.util.UUID;
 
+/**
+ * This is class matches the database schema. There is also a wrapper
+ * class made to be compatible with {@link UserDetails}.
+ * @see AppUserDetailsWrapper
+ */
 @DtoAsWell
 @Entity
 @Table(name = "appuser")
-public class AppUser {
+public class AppUser implements Serializable {
     @Id
     @Type(type="org.hibernate.type.UUIDCharType")
     @Column(name = "userid")

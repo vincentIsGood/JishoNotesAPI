@@ -1,6 +1,5 @@
 package com.vincentcodes.jishoapi.helpers;
 
-// TODO: add elastic search to the project.
 public class JishoSearchExpressionProcessor {
     /**
      * whether the content matches the expression (it

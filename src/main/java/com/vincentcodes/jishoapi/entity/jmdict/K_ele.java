@@ -1,5 +1,6 @@
 package com.vincentcodes.jishoapi.entity.jmdict;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.vincentcodes.jishoapi.helpers.XmlElement;
@@ -11,7 +12,20 @@ import java.util.List;
 public class K_ele {
     public String keb;
     public String ke_inf;
+    @JsonIgnore
     public String ke_pri;
+
+    public String getKeb() {
+        return keb;
+    }
+
+    public String getKe_inf() {
+        return ke_inf;
+    }
+
+    public String getKe_pri() {
+        return ke_pri;
+    }
 
     public static K_ele[] extractFrom(List<XmlElement> elements) {
         return elements.stream().map(element -> {

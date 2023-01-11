@@ -1,5 +1,6 @@
 package com.vincentcodes.jishoapi.entity.jmdict;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
@@ -12,10 +13,32 @@ import java.util.List;
 public class R_ele {
     public String reb;
     // re_nokanji is not reliable
+    @JsonIgnore
     public boolean re_nokanji = false; // if it exist, the method below is called by Jackson to set it true
     public String re_restr;
     public String re_inf;
+    @JsonIgnore
     public String re_pri;
+
+    public String getReb() {
+        return reb;
+    }
+
+    public boolean isRe_nokanji() {
+        return re_nokanji;
+    }
+
+    public String getRe_restr() {
+        return re_restr;
+    }
+
+    public String getRe_inf() {
+        return re_inf;
+    }
+
+    public String getRe_pri() {
+        return re_pri;
+    }
 
     // Whenever we encounter <re_nokanji>, we will do the manual job.
     @JacksonXmlProperty(localName = "re_nokanji")

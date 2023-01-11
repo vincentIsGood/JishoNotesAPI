@@ -2,19 +2,27 @@ package com.vincentcodes.jishoapi;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vincentcodes.jishoapi.entity.FlashCardDeck;
+import com.vincentcodes.jishoapi.service.UserService;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+/**
+ * @link https://docs.spring.io/spring-security/reference/servlet/test/mockmvc/authentication.html
+ */
 @SpringBootTest
 @AutoConfigureMockMvc
+@WithMockUser(authorities = "NORMAL_USER")
+@ActiveProfiles("test")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class APIFlashcardTest {
@@ -24,6 +32,9 @@ public class APIFlashcardTest {
 
     @Autowired
     private ObjectMapper mapper;
+
+    @Autowired
+    private UserService userService;
 
     private String deckId;
 

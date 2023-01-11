@@ -1,6 +1,11 @@
 package com.vincentcodes.jishoapi.config;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.vincentcodes.jishoapi.config.elastic.BasicElasticSearchConfig;
+import com.vincentcodes.jishoapi.datafilters.ModificationFilter;
 import com.vincentcodes.jishoapi.entity.JishoNote;
 import com.vincentcodes.jishoapi.helpers.dict.JishoNotesExtractor;
 import com.vincentcodes.jishoapi.helpers.libwrap.SafeElasticSearchClient;
@@ -9,10 +14,12 @@ import com.vincentcodes.jishoapi.repository.*;
 import org.elasticsearch.client.core.CountResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 import java.io.IOException;
@@ -27,6 +34,21 @@ public class AppConfig {
 
     @Value("${spring.dangerous-mode}")
     private boolean isInDangerousMode;
+
+    @Autowired
+    //@Qualifier("default")
+    @Qualifier("safe")
+    private ModificationFilter<String> jishonotesFilter;
+
+    @Bean
+    @Primary
+    public ObjectMapper objectMapper(){
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+        return mapper;
+    }
 
     @Bean
     public FlashCardsDao postgresFlashCardsDao(){
@@ -56,7 +78,7 @@ public class AppConfig {
         if(!client.isConnected()){
             LOGGER.error("Connection to ElasticSearch cannot be established");
             if(isInDangerousMode) {
-                LOGGER.warn("Dangerous mode is on. Allowing the use of unconnected elastic repo");
+                LOGGER.warn("Dangerous mode is on. Ignoring unconnected ElasticSearch instance");
                 return new JishoNotesElasticRepo();
             }
         }
@@ -69,7 +91,8 @@ public class AppConfig {
         List<JishoNote> notes = notesExtractor.extract();
         try(SimpleBulkProcessor bulkProcessor = client.createBulkProcessor(config.indexName)) {
             for (JishoNote note : notes)
-                bulkProcessor.index(Integer.toString(note.getValue()), Map.of("note", note.getNote()));
+                bulkProcessor.index(Integer.toString(note.getValue()),
+                        Map.of("note", jishonotesFilter.filter(note.getNote())));
             LOGGER.info("Sent a total of " + notes.size() + " notes to ElasticSearch for indexing");
         }
         return new JishoNotesElasticRepo();

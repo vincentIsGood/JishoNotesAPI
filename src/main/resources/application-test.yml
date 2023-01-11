@@ -1,0 +1,6 @@
+# profile: test
+# https://stackoverflow.com/questions/38711871/load-different-application-yml-in-springboot-test
+
+spring:
+  inmemdb: true
+  dangerous-mode: true

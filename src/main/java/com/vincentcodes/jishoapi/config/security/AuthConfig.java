@@ -1,10 +1,10 @@
 package com.vincentcodes.jishoapi.config.security;
 
+import com.vincentcodes.jishoapi.config.consts.ApiEndpoints;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -37,6 +37,11 @@ public class AuthConfig {
     @Bean
     public AuthenticationManager authenticationManager(JsonAuthenticationProvider authProvider) {
         return new ProviderManager(authProvider);
+    }
+
+    @Bean
+    public JsonAuthenticationFilter jsonAuthenticationFilter(AuthenticationManager authenticationManager){
+        return new JsonAuthenticationFilter(ApiEndpoints.LOGIN, authenticationManager);
     }
 
 }

@@ -10,6 +10,8 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Sense {
+    // pos and gloss are normally used
+
     @JacksonXmlElementWrapper(useWrapping = false)
     public String[] stagk;
     @JacksonXmlElementWrapper(useWrapping = false)
@@ -32,6 +34,50 @@ public class Sense {
     public String[] dial;
     @JacksonXmlElementWrapper(useWrapping = false)
     public String[] gloss;
+
+    public String[] getStagk() {
+        return stagk;
+    }
+
+    public String[] getStagr() {
+        return stagr;
+    }
+
+    public String[] getPos() {
+        return pos;
+    }
+
+    public String[] getXref() {
+        return xref;
+    }
+
+    public String[] getAnt() {
+        return ant;
+    }
+
+    public String[] getField() {
+        return field;
+    }
+
+    public String[] getMisc() {
+        return misc;
+    }
+
+    public String[] getS_inf() {
+        return s_inf;
+    }
+
+    public String[] getLsource() {
+        return lsource;
+    }
+
+    public String[] getDial() {
+        return dial;
+    }
+
+    public String[] getGloss() {
+        return gloss;
+    }
 
     public static Sense[] extractFrom(List<XmlElement> elements) {
         return elements.stream().map(element -> {

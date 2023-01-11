@@ -48,6 +48,7 @@ public class JishoNotesElasticRepo implements JishoNotesDao {
 
     private final Random random = new Random();
     private List<String> topics; // laze loaded
+    private int notesLength = -1;
 
     /**
      * @return the previous number of records reside within ElasticSearch
@@ -60,7 +61,6 @@ public class JishoNotesElasticRepo implements JishoNotesDao {
             try {
                 notes = notesExtractor.extract();
                 try (SimpleBulkProcessor bulkProcessor = restClient.createBulkProcessor(config.indexName)) {
-                    // TODO: create a util class JishoNote to elastic format kind of method instead of Map.of
                     for (JishoNote note : notes)
                         bulkProcessor.index(Integer.toString(note.getValue()), Map.of("note", note.getNote()));
                     LOGGER.info("Sent a total of " + notes.size() + " notes to ElasticSearch for re-indexing");
@@ -70,7 +70,7 @@ public class JishoNotesElasticRepo implements JishoNotesDao {
             }
         });
         CountResponse response = restClient.count(config.indexName, QueryBuilders.matchAllQuery());
-        return (int)response.getCount();
+        return notesLength = (int)response.getCount();
     }
     // A bean is required for Async beans to work because we need Spring to wrap them in a proxy
     //@Async
@@ -86,8 +86,9 @@ public class JishoNotesElasticRepo implements JishoNotesDao {
 
     @Override
     public JishoNote getRandomNote(String searchString, boolean matchingLinesOnly) {
+        if(notesLength == -1) reload();
         ElasticRepoPage page = restClient.createPage(config.indexName, QueryBuilders.matchAllQuery(), 1000);
-        return searchHitToJishoNote(page.getSearchHitByIndex(random.nextInt(reload())));
+        return searchHitToJishoNote(page.getSearchHitByIndex(random.nextInt(notesLength)));
     }
 
     @Override

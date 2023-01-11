@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-// TODO: to be replaced by elastic search crud repo? (Spring Data)
+// TODO: to be replaced by elastic search? (Spring Data)
 //@Repository // see config
 public class JishoEntryRepo implements JishoEntryDao{
     private final JishoEntryExtractor jishoEntryExtractor;

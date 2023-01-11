@@ -4,13 +4,12 @@ import com.ctc.wstx.api.WstxInputProperties;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import com.vincentcodes.jishoapi.entity.DetailedJishoEntry;
+import com.vincentcodes.jishoapi.entity.JishoEntryDetailed;
 import com.vincentcodes.jishoapi.entity.JishoEntry;
 import com.vincentcodes.jishoapi.entity.jmdict.JmdictXmlEntityResolver;
 import com.vincentcodes.jishoapi.entity.jmdict.RawJishoEntry;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -74,7 +73,7 @@ public class JishoEntryExtractor {
             e.printStackTrace();
         }
         if(entries == null) return;
-        List<DetailedJishoEntry> detailedEntries = entries.stream().map(DetailedJishoEntry::new).collect(Collectors.toList());
+        List<JishoEntryDetailed> detailedEntries = entries.stream().map(JishoEntryDetailed::new).collect(Collectors.toList());
         Map<Integer, JishoEntry> result = detailedEntries.stream().map(entry -> (JishoEntry)entry).collect(Collectors.toMap(JishoEntry::getSequence, Function.identity()));
         idToEntryMap.putAll(result);
     }

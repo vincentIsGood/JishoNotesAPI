@@ -25,6 +25,7 @@ dependencies {
     implementation 'com.h2database:h2'
     implementation 'org.postgresql:postgresql'
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.13.3'
+    testImplementation 'org.springframework.security:spring-security-test'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 

@@ -1,12 +1,14 @@
 # https://stackoverflow.com/questions/33323837/database-application-yml-for-spring-boot-from-applications-properties
-
+# https://stackoverflow.com/questions/61993955/spring-boot-session-configuration-questions
 server:
   port: 32100
   servlet:
     session:
+      timeout: PT1H
       cookie:
         http-only: true
         secure: true
+        same-site: Lax
 
 external:
   dict:

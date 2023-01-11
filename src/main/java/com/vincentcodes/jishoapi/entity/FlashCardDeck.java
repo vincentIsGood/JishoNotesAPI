@@ -2,6 +2,7 @@ package com.vincentcodes.jishoapi.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.vincentcodes.jishoapi.utils.DtoAsWell;
 import org.hibernate.annotations.Type;
 import org.springframework.web.util.HtmlUtils;
@@ -22,6 +23,8 @@ import java.util.stream.IntStream;
  * That's why it's called a collection table instead of join table.
  */
 @DtoAsWell
+@JsonView({FlashCardDeck.Views.Simple.class,
+        FlashCardDeck.Views.Full.class})
 @Entity
 @Table(name = "flashcarddeck")
 public class FlashCardDeck {
@@ -30,11 +33,14 @@ public class FlashCardDeck {
     @Type(type="org.hibernate.type.UUIDCharType")
     @JsonProperty
     private final UUID deckId;
+
     private String name;
+
+    private String description;
 
     // https://stackoverflow.com/questions/2501383/persisting-a-list-of-integers-with-jpa?rq=1
     //@OneToMany(mappedBy = "somefield") // is essentially @ManyToMany
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "carddeckentry", joinColumns = @JoinColumn(name = "deckid"))
     @Column(name = "entryid") // column in the collection table
     private Set<Integer> cards;
@@ -48,8 +54,9 @@ public class FlashCardDeck {
         this(name, new HashSet<>());
     }
 
+    // DTO constructor
     public FlashCardDeck(){
-        this("");
+        this.deckId = UUID.randomUUID();
     }
 
     public void addCard(int entryId){
@@ -79,9 +86,14 @@ public class FlashCardDeck {
         return name;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
     /**
      * @return null if no cards exist
      */
+    @JsonView({FlashCardDeck.Views.Full.class, FlashCardDeck.Views.CardsOnly.class})
     public List<Integer> getCards() {
         if(cards == null)
             return null;
@@ -100,4 +112,15 @@ public class FlashCardDeck {
     public void setCards(Set<Integer> cards){
         this.cards = cards;
     }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public static class Views{
+        public static class Simple{}
+        public static class CardsOnly{}
+        public static class Full{}
+    }
+
 }

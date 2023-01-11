@@ -14,6 +14,10 @@ public interface FlashCardsDao {
 
     List<FlashCardDeck> getAllDecks();
 
+    boolean existDeckWithUUID(UUID deckId);
+
+    List<FlashCardDeck> findDecksFromIds(List<UUID> deckIds);
+
     FlashCardDeck createDeck(String name);
 
     Optional<FlashCardDeck> updateDeck(UUID deckId, FlashCardDeck newDeck);

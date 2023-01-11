@@ -12,10 +12,13 @@ public final class ApiEndpoints {
         public final static List<String> PATH_MATCHERS = List.of(
                 "/jishonotes/v2/notes/**",
                 "/jishonotes/v2/entries/**",
-                "/jishonotes/v1/analyze/**"
+                "/jishonotes/v1/analyze/**",
+                "jishonotes/v1/news/**",
+                "/jishonotes/v1/users/loginstatus"
         );
     }
 
+    // Actively used (ie. not deprecated) endpoints
     public final static class AuthRequired {
         public final static List<String> PATH_MATCHERS = List.of(
                 "/jishonotes/v1/users/**",

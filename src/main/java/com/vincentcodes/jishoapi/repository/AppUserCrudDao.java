@@ -12,7 +12,7 @@ import java.util.UUID;
  * @link https://www.baeldung.com/spring-data-derived-queries
  */
 @Repository
-public interface AppUserDao extends CrudRepository<AppUser, UUID> {
+public interface AppUserCrudDao extends CrudRepository<AppUser, UUID> {
     /**
      * @param name username
      */

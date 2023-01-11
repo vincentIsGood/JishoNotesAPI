@@ -29,6 +29,16 @@ public class FlashCardsPostgreRepo implements FlashCardsDao {
     }
 
     @Override
+    public boolean existDeckWithUUID(UUID deckId) {
+        return dao.existsById(deckId);
+    }
+
+    @Override
+    public List<FlashCardDeck> findDecksFromIds(List<UUID> deckIds) {
+        return dao.findByDeckIdIn(deckIds);
+    }
+
+    @Override
     public FlashCardDeck createDeck(String name) {
         FlashCardDeck deck = new FlashCardDeck(name);
         return dao.save(deck);
@@ -39,8 +49,12 @@ public class FlashCardsPostgreRepo implements FlashCardsDao {
         Optional<FlashCardDeck> optionalDeck = dao.findById(deckId);
         if(optionalDeck.isPresent()){
             FlashCardDeck deck = optionalDeck.get();
-            deck.setName(newDeck.getName());
-            deck.setCards(newDeck.getCardSet());
+            if(newDeck.getName() != null)
+                deck.setName(newDeck.getName());
+            if(newDeck.getDescription() != null)
+                deck.setDescription(newDeck.getDescription());
+            if(newDeck.getCardSet() != null)
+                deck.setCards(newDeck.getCardSet());
             dao.save(deck);
             return Optional.of(deck);
         }

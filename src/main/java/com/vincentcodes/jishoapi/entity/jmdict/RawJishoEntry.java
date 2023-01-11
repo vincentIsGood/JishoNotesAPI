@@ -1,16 +1,9 @@
 package com.vincentcodes.jishoapi.entity.jmdict;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
-import com.vincentcodes.jishoapi.entity.JishoEntry;
 import com.vincentcodes.jishoapi.helpers.XmlElement;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -23,6 +16,23 @@ public class RawJishoEntry {
     @JacksonXmlElementWrapper(useWrapping = false)
     public Sense[] sense;
 
+    public int getEnt_seq() {
+        return ent_seq;
+    }
+
+    public K_ele[] getK_ele() {
+        return k_ele;
+    }
+
+    public R_ele[] getR_ele() {
+        return r_ele;
+    }
+
+    public Sense[] getSense() {
+        return sense;
+    }
+
+    @Deprecated
     public static RawJishoEntry parse(XmlElement element){
         RawJishoEntry entry = new RawJishoEntry();
         entry.ent_seq = Integer.parseInt(element.getFirstElementByTagName("ent_seq").getContent());

@@ -1,7 +1,8 @@
 package com.vincentcodes.jishoapi.controller;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.vincentcodes.jishoapi.entity.FlashCardDeck;
-import com.vincentcodes.jishoapi.service.FlashCardsService;
+import com.vincentcodes.jishoapi.service.SafeFlashCardsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -17,15 +18,39 @@ import java.util.UUID;
 public class FlashCardsController {
 
     @Autowired
-    private FlashCardsService service;
+    private SafeFlashCardsService service;
 
     @GetMapping("/decks")
-    public List<FlashCardDeck> getDecks(){
+    public List<FlashCardDeck> getAllDecks(){
+        return service.getDecks();
+    }
+
+    @GetMapping("/decks/simple")
+    @JsonView({FlashCardDeck.Views.Simple.class})
+    public List<FlashCardDeck> getAllDecksSimple(){
         return service.getDecks();
     }
 
     @GetMapping("/decks/{uuid}")
-    public FlashCardDeck getDeckFromName(@PathVariable("uuid") UUID uuid){
+    public FlashCardDeck getDeck(@PathVariable("uuid") UUID uuid){
+        Optional<FlashCardDeck> deck = service.getDeckFromUUID(uuid);
+        if(deck.isEmpty())
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Cannot find the specified flash card deck");
+        return deck.get();
+    }
+
+    @GetMapping("/decks/simple/{uuid}")
+    @JsonView({FlashCardDeck.Views.Simple.class})
+    public FlashCardDeck getDeckSimple(@PathVariable("uuid") UUID uuid){
+        Optional<FlashCardDeck> deck = service.getDeckFromUUID(uuid);
+        if(deck.isEmpty())
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Cannot find the specified flash card deck");
+        return deck.get();
+    }
+
+    @GetMapping("/decks/cards/{uuid}")
+    @JsonView({FlashCardDeck.Views.CardsOnly.class})
+    public FlashCardDeck getDeckCards(@PathVariable("uuid") UUID uuid){
         Optional<FlashCardDeck> deck = service.getDeckFromUUID(uuid);
         if(deck.isEmpty())
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Cannot find the specified flash card deck");
@@ -60,7 +85,6 @@ public class FlashCardsController {
     public void removeCardOrDeck(@PathVariable("uuid") UUID uuid, @RequestBody(required = false) int[] entryId){
         if(entryId != null) {
             service.removeCardsFromDeck(uuid, entryId);
-        }else
-            service.removeDeck(uuid);
+        }else service.removeDeck(uuid);
     }
 }
