@@ -6,3 +6,7 @@ server:
     session:
       cookie:
         same-site: none
+
+spring:
+  inmemdb: false
+  dangerous-mode: true

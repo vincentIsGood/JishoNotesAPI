@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -41,6 +42,10 @@ public class JishoEntryRepo implements JishoEntryDao{
 
     @Override
     public List<JishoEntry> findExactEntryFromString(String word){
+        String[] words = word.split(",");
+        if(words.length > 0)
+            return Arrays.stream(words).map(jishoEntryExtractor::lookupExactEntries)
+                    .flatMap(Collection::stream).collect(Collectors.toList());
         return jishoEntryExtractor.lookupExactEntries(word);
     }
 

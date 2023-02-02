@@ -57,3 +57,5 @@ atlassian-ide-plugin.xml
 /dict/
 /elastic*/
 /0_*
+/secret*
+application-*prod*.yml

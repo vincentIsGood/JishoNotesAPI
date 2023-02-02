@@ -4,7 +4,7 @@ server:
   port: 32100
   servlet:
     session:
-      timeout: PT1H
+      timeout: PT2H
       cookie:
         http-only: true
         secure: true
@@ -16,16 +16,29 @@ external:
     kanjidict_path: ./dict/kanjidic2.xml
   notes_path: ./メモ.shirabe
 
+other-private:
+  special-pass: ${SPECIAL_PASS}
+
 # https://www.baeldung.com/spring-data-jpa-multiple-databases
 # https://stackoverflow.com/questions/45409196/how-to-make-spring-server-to-start-even-if-database-is-down
 spring:
   inmemdb: false
-  dangerous-mode: true
+  dangerous-mode: false
   allowed-origins: ${ALLOWED_ORIGIN} # comma separated
   jpa:
     show-sql: false
   session:
     store-type: jdbc
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            client-id: ${GITHUB_OAUTH2_ID}
+            client-secret: ${GITHUB_OAUTH2_SECRET}
+          google:
+            client-id: ${GOOGLE_OAUTH2_ID}
+            client-secret: ${GOOGLE_OAUTH2_SECRET}
   data:
     postgres:
       hikari:

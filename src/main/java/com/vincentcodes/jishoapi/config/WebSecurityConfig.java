@@ -1,12 +1,14 @@
 package com.vincentcodes.jishoapi.config;
 
 import com.vincentcodes.jishoapi.config.consts.ApiEndpoints;
+import com.vincentcodes.jishoapi.config.security.NoRedirectionAuthEntryPoint;
 import com.vincentcodes.jishoapi.config.security.JsonAuthenticationFilter;
 import com.vincentcodes.jishoapi.config.security.JsonAuthorizationHeaderWriter;
+import com.vincentcodes.jishoapi.config.security.RedirectionAuthSuccessHandler;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpHeaders;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
@@ -15,7 +17,9 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Web security for this application is done here.
@@ -46,7 +50,7 @@ public class WebSecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
         config.applyPermitDefaultValues();
         config.setAllowCredentials(true);
-        config.setAllowedOrigins(List.of(allowedOrigins));
+        config.setAllowedOrigins(Arrays.asList(allowedOrigins));
         config.setAllowedMethods(List.of("*"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
@@ -68,6 +72,8 @@ public class WebSecurityConfig {
         http.headers()
                 .addHeaderWriter(new JsonAuthorizationHeaderWriter())
             .and().httpBasic()
+                .and().exceptionHandling()
+                    .authenticationEntryPoint(new NoRedirectionAuthEntryPoint())
                 .and().cors()
                 .and().csrf().disable()
                 .requestCache().requestCache(httpSessionRequestCache)
@@ -79,7 +85,9 @@ public class WebSecurityConfig {
                 .anyRequest().authenticated()
                 .and().logout()
                     .logoutRequestMatcher(ApiEndpoints.LOGOUT)
-                .and().addFilter(jsonAuthenticationFilter);
+                .and().addFilter(jsonAuthenticationFilter)
+                .oauth2Login()
+                    .successHandler(new RedirectionAuthSuccessHandler());
         //http.addFilterAfter(new AppSessionAuthFilter(), BasicAuthenticationFilter.class);
         return http.build();
     }

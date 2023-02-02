@@ -111,8 +111,8 @@ public class JishoEntryExtractor {
     public List<JishoEntry> lookupExactEntries(String searchString){
         List<JishoEntry> result = new ArrayList<>();
         for(JishoEntry entry : idToEntryMap.values()){
-            if(stringArrayContains(entry.getHeadword(), searchString)
-            || stringArrayContains(entry.getReadings(), searchString)){
+            if(stringArrayItemEquals(entry.getHeadword(), searchString)
+            || stringArrayItemEquals(entry.getReadings(), searchString)){
                 result.add(entry);
             }
         }
@@ -128,22 +128,22 @@ public class JishoEntryExtractor {
         Pattern pattern = Pattern.compile(regexString);
         List<JishoEntry> result = new ArrayList<>();
         for(JishoEntry entry : idToEntryMap.values()){
-            if(stringArrayContains(entry.getHeadword(), pattern)
-            || stringArrayContains(entry.getReadings(), pattern)){
+            if(stringArrayMatches(entry.getHeadword(), pattern)
+            || stringArrayMatches(entry.getReadings(), pattern)){
                 result.add(entry);
             }
         }
         return result;
     }
 
-    private boolean stringArrayContains(String[] arr, String ele){
+    private boolean stringArrayItemEquals(String[] arr, String ele){
         for(String str : arr){
             if(str.equals(ele))
                 return true;
         }
         return false;
     }
-    private boolean stringArrayContains(String[] arr, Pattern pattern){
+    private boolean stringArrayMatches(String[] arr, Pattern pattern){
         for(String str : arr){
             Matcher matcher = pattern.matcher(str);
             if(matcher.find())

@@ -1,6 +1,8 @@
 package com.vincentcodes.jishoapi.config;
 
 import com.zaxxer.hikari.HikariDataSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
@@ -31,10 +33,13 @@ import javax.sql.DataSource;
 @Configuration
 //@EnableJdbcHttpSession // [optional] not needed if "spring.session.store-type: jdbc" exists
 public class JpaDatabaseConfig {
+    private static final Logger LOGGER = LoggerFactory.getLogger(JpaDatabaseConfig.class);
+
     @Bean
     @Primary
     @ConditionalOnExpression("${spring.inmemdb:true}")
     public DataSource inMemoryDataSource(){
+        LOGGER.warn("Using in-memory database");
         DataSourceBuilder<?> builder = DataSourceBuilder.create();
         builder.url("jdbc:h2:mem:jishonotes");
         builder.username("sa");
