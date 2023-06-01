@@ -7,11 +7,21 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 
 /**
  * <p>
- * What to use for AuthenticationManager
+ * What type is used for AuthenticationManager
  * @link https://stackoverflow.com/questions/31826233/custom-authentication-manager-with-spring-security-and-java-configuration
+ *
+ * <p>
+ * Customizing OAuth2 by code:
+ * https://docs.spring.io/spring-security/reference/servlet/oauth2/client/core.html#oauth2Client-authorized-repo-service
+ * https://docs.spring.io/spring-security/site/docs/5.0.7.RELEASE/reference/html/oauth2login-advanced.html#oauth2login-advanced-map-authorities-oauth2userservice
  *
  * @see JsonAuthenticationFilter
  * @see JsonAuthenticationProvider
@@ -42,6 +52,16 @@ public class AuthConfig {
     @Bean
     public JsonAuthenticationFilter jsonAuthenticationFilter(AuthenticationManager authenticationManager){
         return new JsonAuthenticationFilter(ApiEndpoints.LOGIN, authenticationManager);
+    }
+
+    @Bean
+    public OAuth2UserService<OAuth2UserRequest, OAuth2User> oAuth2UserFetcher(){
+        return new OAuth2UserFetcher();
+    }
+
+    @Bean
+    public OAuth2UserService<OidcUserRequest, OidcUser> oidcUserOAuth2UserService(){
+        return new OAuth2OidcUserFetcher();
     }
 
 }

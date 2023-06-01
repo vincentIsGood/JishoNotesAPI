@@ -1,6 +1,7 @@
 package com.vincentcodes.jishoapi.controller;
 
 import com.vincentcodes.jishoapi.config.security.AuthenticationContext;
+import com.vincentcodes.jishoapi.entity.AppUserObtainable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -20,8 +21,13 @@ public class UsersController {
     @GetMapping("/loginstatus")
     public ResponseEntity<Void> amILoggedIn(){
         Authentication authentication = authContext.getAuthentication();
+
         if(authentication instanceof AnonymousAuthenticationToken || !authentication.isAuthenticated())
             return ResponseEntity.badRequest().build();
-        return ResponseEntity.ok(null);
+
+        if(authentication.getPrincipal() instanceof AppUserObtainable){
+            return ResponseEntity.ok(null);
+        }
+        return ResponseEntity.badRequest().build();
     }
 }

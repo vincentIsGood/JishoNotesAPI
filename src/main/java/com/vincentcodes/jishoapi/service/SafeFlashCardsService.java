@@ -2,6 +2,7 @@ package com.vincentcodes.jishoapi.service;
 
 import com.vincentcodes.jishoapi.config.security.AuthenticationContext;
 import com.vincentcodes.jishoapi.entity.AppUserDetailsWrapper;
+import com.vincentcodes.jishoapi.entity.AppUserObtainable;
 import com.vincentcodes.jishoapi.entity.FlashCardDeck;
 import com.vincentcodes.jishoapi.entity.UserDecks;
 import com.vincentcodes.jishoapi.exception.DuplicateResourceNotAllowed;
@@ -83,15 +84,20 @@ public class SafeFlashCardsService {
         flashCardsRepo.removeCardsFromDeck(deckId, entryIds);
     }
 
-    private AppUserDetailsWrapper getLoggedInUserInfo(){
-        return (AppUserDetailsWrapper) authContext.getAuthentication().getPrincipal();
+    private AppUserObtainable getLoggedInUserInfo(){
+        if(authContext.getAuthentication().getPrincipal() instanceof AppUserObtainable)
+            return (AppUserObtainable) authContext.getAuthentication().getPrincipal();
+        throw new InvalidOperation("User is not authorized");
     }
+
     private UUID getLoggedInUserId(){
         return getLoggedInUserInfo().getAppUser().getUserId();
     }
+
     private List<UserDecks> getUserDecks(){
         return userDecksRepo.findByUserId(getLoggedInUserId());
     }
+
     private void verifyIfDeckBelongsToUser(UUID deckId){
         List<UserDecks> userDecks = getUserDecks();
         if(userDecks.size() == 0)

@@ -1,4 +1,4 @@
-package com.vincentcodes.jishoapi.utils;
+package com.vincentcodes.jishoapi.sterotype;
 
 import java.lang.annotation.*;
 

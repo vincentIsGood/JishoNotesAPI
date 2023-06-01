@@ -8,6 +8,7 @@ import com.vincentcodes.jishoapi.exception.UserAlreadyExistsException;
 import com.vincentcodes.jishoapi.exception.UserNotFoundException;
 import com.vincentcodes.jishoapi.repository.AppUserCrudDao;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -48,12 +49,14 @@ public class UserService {
      * @param userId uid to check against
      * @return same person or not
      */
+    // TODO: make verification into a class(?)
     private boolean verifyIdentity(UUID userId){
         Authentication clientAuth = authenticationContext.getAuthentication();
         AppUserDetailsWrapper details = (AppUserDetailsWrapper) clientAuth.getPrincipal();
         return details.getAppUser().getUserId().equals(userId);
     }
 
+    // TODO: these functions, we don't need to take UUID from requests if we already have a session
     /**
      * Get himself
      */
@@ -67,13 +70,20 @@ public class UserService {
     }
 
     /**
-     * @return with UUID
+     * @return user with UUID
      */
     public AppUser createUser(String username, String password){
+        return createUser(username, password, true);
+    }
+    public AppUser createUser(String username, String password, boolean allowUserPassLogin){
+        if(allowUserPassLogin && username.contains("\\"))
+            throw new BadCredentialsException("Username cannot contain invalid character '\\'");
         Optional<AppUser> realUserOptional = userDao.findByName(username);
         if(realUserOptional.isPresent())
             throw new UserAlreadyExistsException(username);
-        return userDao.save(new AppUser(username, passwordEncoder.encode(password)));
+        AppUser appUser = new AppUser(username, passwordEncoder.encode(password));
+        appUser.setAllowUserPassLogin(allowUserPassLogin);
+        return userDao.save(appUser);
     }
 
     /**

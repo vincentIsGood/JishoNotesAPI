@@ -1,16 +1,18 @@
 package com.vincentcodes.jishoapi.config;
 
 import com.vincentcodes.jishoapi.config.consts.ApiEndpoints;
-import com.vincentcodes.jishoapi.config.security.NoRedirectionAuthEntryPoint;
-import com.vincentcodes.jishoapi.config.security.JsonAuthenticationFilter;
-import com.vincentcodes.jishoapi.config.security.JsonAuthorizationHeaderWriter;
-import com.vincentcodes.jishoapi.config.security.RedirectionAuthSuccessHandler;
+import com.vincentcodes.jishoapi.config.security.*;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.web.cors.CorsConfiguration;
@@ -60,7 +62,11 @@ public class WebSecurityConfig {
     // For CORS, see https://stackoverflow.com/questions/54276986/spring-boot-security-no-access-control-allow-origin-header-when-setting-allow
     //           CrossOrigin works when the "Origin" header exists in the request.
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http, JsonAuthenticationFilter jsonAuthenticationFilter) throws Exception{
+    public SecurityFilterChain filterChain(
+            HttpSecurity http,
+            JsonAuthenticationFilter jsonAuthenticationFilter,
+            OAuth2UserService<OAuth2UserRequest, OAuth2User> oAuth2UserService,
+            OAuth2UserService<OidcUserRequest, OidcUser> oidcUserOAuth2UserService) throws Exception{
         // Do not create session on 401
         // https://stackoverflow.com/questions/70769950/prevent-unauthorized-http-requests-redirected-to-error-from-setting-session-coo
         HttpSessionRequestCache httpSessionRequestCache = new HttpSessionRequestCache();
@@ -87,8 +93,17 @@ public class WebSecurityConfig {
                     .logoutRequestMatcher(ApiEndpoints.LOGOUT)
                 .and().addFilter(jsonAuthenticationFilter)
                 .oauth2Login()
+                    .authorizationEndpoint()
+                        .baseUri(ApiEndpoints.OAUTH2_INTERNAL)
+                        .and()
+                    .redirectionEndpoint()
+                        .baseUri(ApiEndpoints.OAUTH2_CALLBACK)
+                        .and()
+                    .userInfoEndpoint()
+                        .userService(oAuth2UserService)
+                        .oidcUserService(oidcUserOAuth2UserService)
+                        .and()
                     .successHandler(new RedirectionAuthSuccessHandler());
-        //http.addFilterAfter(new AppSessionAuthFilter(), BasicAuthenticationFilter.class);
         return http.build();
     }
 

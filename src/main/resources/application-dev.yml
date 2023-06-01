@@ -8,5 +8,7 @@ server:
         same-site: none
 
 spring:
-  inmemdb: false
+  inmemdb: true
   dangerous-mode: true
+  jpa:
+    generate-ddl: true

@@ -1,6 +1,6 @@
 package com.vincentcodes.jishoapi.entity;
 
-import com.vincentcodes.jishoapi.utils.DtoAsWell;
+import com.vincentcodes.jishoapi.sterotype.DtoAsWell;
 import org.elasticsearch.client.indices.AnalyzeResponse;
 
 import java.util.Arrays;

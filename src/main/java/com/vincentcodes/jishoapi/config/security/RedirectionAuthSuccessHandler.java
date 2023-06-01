@@ -9,9 +9,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/**
+ * After the whole auth process, this is invoked
+ */
 public class RedirectionAuthSuccessHandler implements AuthenticationSuccessHandler {
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-        response.sendRedirect(ApiEndpoints.OAUTH2_AUTH_SUCCESS_URL);
+        response.setStatus(HttpServletResponse.SC_FOUND);
+        response.setHeader("Location", ApiEndpoints.OAUTH2_AUTH_SUCCESS_URL);
     }
 }

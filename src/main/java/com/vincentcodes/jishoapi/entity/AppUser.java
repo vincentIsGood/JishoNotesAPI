@@ -1,6 +1,6 @@
 package com.vincentcodes.jishoapi.entity;
 
-import com.vincentcodes.jishoapi.utils.DtoAsWell;
+import com.vincentcodes.jishoapi.sterotype.DtoAsWell;
 import org.hibernate.annotations.Type;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -27,7 +27,12 @@ public class AppUser implements Serializable {
 
     private String name;
 
+    // private String displayName; // use this if the person is an oauth user
+
     private String pass;
+
+    @Column(name = "can_userpass")
+    private boolean canUserPassLogin = true;
 
     public AppUser(String name, String pass) {
         this.userId = UUID.randomUUID();
@@ -48,6 +53,14 @@ public class AppUser implements Serializable {
         this.pass = pass;
     }
 
+    /**
+     * Enabling User-Password login mechanism
+     * @param allowUserPassLogin uses password to login?
+     */
+    public void setAllowUserPassLogin(boolean allowUserPassLogin){
+        canUserPassLogin = allowUserPassLogin;
+    }
+
     public UUID getUserId() {
         return userId;
     }
@@ -58,5 +71,19 @@ public class AppUser implements Serializable {
 
     public String getPass() {
         return pass;
+    }
+
+    public boolean allowUserPassLogin(){
+        return canUserPassLogin;
+    }
+
+    @Override
+    public String toString() {
+        return "AppUser{" +
+                "userId=" + userId +
+                ", name='" + name + '\'' +
+                ", pass='" + pass + '\'' +
+                ", canUserPassLogin=" + canUserPassLogin +
+                '}';
     }
 }

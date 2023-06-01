@@ -1,20 +1,26 @@
 package com.vincentcodes.jishoapi.controller;
 
+import com.vincentcodes.jishoapi.config.consts.ApiEndpoints;
 import com.vincentcodes.jishoapi.config.consts.SecurityRelatedConsts;
 import com.vincentcodes.jishoapi.config.security.AuthenticationContext;
+import com.vincentcodes.jishoapi.utils.UriExtendedUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.web.util.UrlUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.net.URI;
 
 @CrossOrigin
 @RestController
@@ -36,27 +42,30 @@ public class OAuth2UserInterface {
         if(isLoggedIn) return;
 
         CorsConfiguration catchAllCorsConfig = ((UrlBasedCorsConfigurationSource)corsConfigurationSource).getCorsConfigurations().get("/**");
-        if(catchAllCorsConfig.checkOrigin(returnUrl) == null) {
-            res.sendError(400, "Invalid return url");
-            return;
-        }
+        if(catchAllCorsConfig.checkOrigin(UriExtendedUtils.getOrigin(returnUrl)) == null)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid return url");
 
         String registrationId;
         switch(provider.toLowerCase()){
             case "github": registrationId = "github"; break;
             case "google": registrationId = "google"; break;
-            default: res.sendError(400, "Invalid provider string"); return;
+            default: throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid provider string");
         }
         HttpSession session = req.getSession();
         session.setMaxInactiveInterval(300); // 5min
         session.setAttribute("ret", returnUrl);
-        res.sendRedirect("/oauth2/authorization/" + registrationId);
+        res.setStatus(HttpServletResponse.SC_FOUND);
+        res.setHeader("Location", ApiEndpoints.OAUTH2_INTERNAL + "/" + registrationId);
     }
 
     // redirect user back to where he wants
     @RequestMapping("/oauth2/success/redirect")
-    public RedirectView oauth2AuthSuccess(HttpSession session) throws IOException {
+    public RedirectView oauth2AuthSuccess(HttpSession session) {
         session.setMaxInactiveInterval(SecurityRelatedConsts.SESSION_MAX_EXPIRE_INTERVAL);
-        return new RedirectView(session.getAttribute("ret").toString());
+
+        Object retUrlObj = session.getAttribute("ret");
+        if(retUrlObj == null)
+            return new RedirectView("/");
+        return new RedirectView(retUrlObj.toString());
     }
 }

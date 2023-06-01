@@ -26,6 +26,9 @@ public class JsonAuthenticationProvider implements AuthenticationProvider {
         || clientAuthInfo.getPass() == null)
             throw new BadCredentialsException("No username / password found from request");
 
+        if(clientAuthInfo.getName().contains("\\"))
+            throw new BadCredentialsException("Cannot contain '\\' in JSON authentication");
+
         UserDetails realCredentials = realCredRetrievalService.loadUserByUsername(clientAuthInfo.getName());
         if(!passwordEncoder.matches(clientAuthInfo.getPass(), realCredentials.getPassword()))
             throw new BadCredentialsException("Invalid name or password");

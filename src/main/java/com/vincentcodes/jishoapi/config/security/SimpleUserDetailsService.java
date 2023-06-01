@@ -36,13 +36,6 @@ public class SimpleUserDetailsService implements UserDetailsService {
         if(optionalUser.isEmpty())
             throw new UsernameNotFoundException(username);
         AppUser user = optionalUser.get();
-        return new AppUserDetailsWrapper(user.getName(), user.getPass(), getAuthorities(AppRoles.PERMITTED_ROLES), user);
-    }
-
-    private Collection<? extends GrantedAuthority> getAuthorities(List<String> roles) {
-        List<GrantedAuthority> authorities = new ArrayList<>();
-        for(String role : roles)
-            authorities.add(new SimpleGrantedAuthority(role));
-        return authorities;
+        return new AppUserDetailsWrapper(user.getName(), user.getPass(), AppRoles.getAuthorities(), user);
     }
 }

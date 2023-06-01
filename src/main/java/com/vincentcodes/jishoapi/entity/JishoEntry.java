@@ -2,7 +2,7 @@ package com.vincentcodes.jishoapi.entity;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.vincentcodes.jishoapi.entity.jmdict.RawJishoEntry;
-import com.vincentcodes.jishoapi.utils.DtoAsWell;
+import com.vincentcodes.jishoapi.sterotype.DtoAsWell;
 
 @DtoAsWell
 @JsonView({JishoEntry.Views.NEW.class,

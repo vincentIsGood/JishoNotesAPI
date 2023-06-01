@@ -1,7 +1,7 @@
 package com.vincentcodes.jishoapi.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.vincentcodes.jishoapi.utils.DtoAsWell;
+import com.vincentcodes.jishoapi.sterotype.DtoAsWell;
 
 @DtoAsWell
 public class JishoNote {

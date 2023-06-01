@@ -1,6 +1,6 @@
 package com.vincentcodes.jishoapi.entity;
 
-import com.vincentcodes.jishoapi.utils.DtoAsWell;
+import com.vincentcodes.jishoapi.sterotype.DtoAsWell;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
@@ -9,8 +9,9 @@ import java.util.Set;
 import java.util.UUID;
 
 @DtoAsWell
-@Entity
-@Table(name = "cardreviewgame")
+//@Entity
+//@Table(name = "cardreviewgame")
+@Deprecated
 public class CardReviewGame {
     @Id
     @Column(name = "gameid") // all lowercase

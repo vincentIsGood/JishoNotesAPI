@@ -12,7 +12,7 @@ import java.io.IOException;
 /**
  * Will not redirect an unauthenticated request
  *
- * @see https://stackoverflow.com/questions/55345833/spring-security-oauth-how-to-disable-login-page
+ * @link https://stackoverflow.com/questions/55345833/spring-security-oauth-how-to-disable-login-page
  */
 public class NoRedirectionAuthEntryPoint implements AuthenticationEntryPoint {
     @Override
