@@ -28,7 +28,6 @@ public final class ApiEndpoints {
                 "/jishonotes/v1/analyze/**",
                 "/jishonotes/v1/news/**",
                 "/jishonotes/v1/users/loginstatus",
-                "/jishonotes/v1/gpt/**",
                 OAUTH2_GENERAL_LOGIN_URL
         );
     }
@@ -38,7 +37,8 @@ public final class ApiEndpoints {
     //    public final static List<String> PATH_MATCHERS = List.of(
     //            "/jishonotes/v1/users/**",
     //            "/jishonotes/v1/flashcards/**",
-    //            "/jishonotes/v1/gpt/**"
+    //            "/jishonotes/v1/gpt/**",
+    //            "/jishonotes/v1/games/**"
     //    );
     //}
 }

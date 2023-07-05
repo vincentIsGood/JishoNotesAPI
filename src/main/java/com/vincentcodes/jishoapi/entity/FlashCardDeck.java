@@ -45,10 +45,16 @@ public class FlashCardDeck {
     @Column(name = "entryid") // column in the collection table
     private Set<Integer> cards;
 
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = "carddeckreviewedentry", joinColumns = @JoinColumn(name = "deckid"))
+    @Column(name = "entryid") // column in the collection table
+    private Set<Integer> reviewedCards;
+
     public FlashCardDeck(String name, Set<Integer> cards){
         this.deckId = UUID.randomUUID();
         this.name = HtmlUtils.htmlEscape(name);
         this.cards = cards;
+        this.reviewedCards = new HashSet<>();
     }
     public FlashCardDeck(String name){
         this(name, new HashSet<>());
@@ -66,6 +72,9 @@ public class FlashCardDeck {
     public void addCards(int[] entriesId){
         cards.addAll(IntStream.of(entriesId).boxed().collect(Collectors.toList()));
     }
+    public void addCards(Collection<Integer> entriesId){
+        cards.addAll(entriesId);
+    }
 
     public void deleteCard(int entryId){
         cards.removeIf(id -> id == entryId);
@@ -74,6 +83,25 @@ public class FlashCardDeck {
     public void deleteCards(int[] entriesId){
         for(int entryId : entriesId) {
             cards.remove(entryId);
+        }
+    }
+
+    public void addReviewedCard(int entryId){
+        reviewedCards.add(entryId);
+    }
+    public void addReviewedCards(int[] entriesId){
+        reviewedCards.addAll(IntStream.of(entriesId).boxed().collect(Collectors.toList()));
+    }
+    public void addReviewedCards(Collection<Integer> entriesId){
+        reviewedCards.addAll(entriesId);
+    }
+    public void deleteReviewedCard(int entryId){
+        reviewedCards.removeIf(id -> id == entryId);
+    }
+
+    public void deleteReviewedCards(int[] entriesId){
+        for(int entryId : entriesId) {
+            reviewedCards.remove(entryId);
         }
     }
 
@@ -103,6 +131,11 @@ public class FlashCardDeck {
     @JsonIgnore
     public Set<Integer> getCardSet(){
         return cards;
+    }
+
+    @JsonView({FlashCardDeck.Views.Full.class, FlashCardDeck.Views.CardsOnly.class})
+    public Set<Integer> getReviewedCards(){
+        return reviewedCards;
     }
 
     public void setName(String name){

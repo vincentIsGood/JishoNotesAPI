@@ -1,7 +1,6 @@
 package com.vincentcodes.jishoapi.service;
 
 import com.vincentcodes.jishoapi.config.security.AuthenticationContext;
-import com.vincentcodes.jishoapi.entity.AppUserDetailsWrapper;
 import com.vincentcodes.jishoapi.entity.AppUserObtainable;
 import com.vincentcodes.jishoapi.entity.FlashCardDeck;
 import com.vincentcodes.jishoapi.entity.UserDecks;
@@ -82,6 +81,13 @@ public class SafeFlashCardsService {
     public void removeCardsFromDeck(UUID deckId, int[] entryIds){
         verifyIfDeckBelongsToUser(deckId);
         flashCardsRepo.removeCardsFromDeck(deckId, entryIds);
+    }
+
+    public void clearReviewedCards(UUID deckId){
+        Optional<FlashCardDeck> deckFromUUID = getDeckFromUUID(deckId);
+        if(deckFromUUID.isEmpty())
+            return;
+        deckFromUUID.get().getReviewedCards().clear();
     }
 
     private AppUserObtainable getLoggedInUserInfo(){

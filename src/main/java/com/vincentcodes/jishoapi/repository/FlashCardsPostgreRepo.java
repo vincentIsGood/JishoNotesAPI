@@ -24,11 +24,6 @@ public class FlashCardsPostgreRepo implements FlashCardsDao {
     }
 
     @Override
-    public List<FlashCardDeck> getAllDecks() {
-        return StreamSupport.stream(dao.findAll().spliterator(), false).collect(Collectors.toList());
-    }
-
-    @Override
     public boolean existDeckWithUUID(UUID deckId) {
         return dao.existsById(deckId);
     }

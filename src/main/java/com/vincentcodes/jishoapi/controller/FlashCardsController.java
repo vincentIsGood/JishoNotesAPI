@@ -16,7 +16,6 @@ import java.util.UUID;
 @RestController
 @RequestMapping("jishonotes/v1/flashcards")
 public class FlashCardsController {
-
     @Autowired
     private SafeFlashCardsService service;
 
@@ -86,5 +85,10 @@ public class FlashCardsController {
         if(entryId != null) {
             service.removeCardsFromDeck(uuid, entryId);
         }else service.removeDeck(uuid);
+    }
+
+    @DeleteMapping("/decks/clearreviewed")
+    public void clearReviewedCards(@RequestParam("uuid") UUID uuid){
+        service.clearReviewedCards(uuid);
     }
 }

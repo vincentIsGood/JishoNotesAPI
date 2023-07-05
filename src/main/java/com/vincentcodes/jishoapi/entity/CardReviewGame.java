@@ -9,72 +9,61 @@ import java.util.Set;
 import java.util.UUID;
 
 @DtoAsWell
-//@Entity
-//@Table(name = "cardreviewgame")
-@Deprecated
+@Entity
+@Table(name = "cardreviewgame")
 public class CardReviewGame {
     @Id
-    @Column(name = "gameid") // all lowercase
+    @Column(name = "gameid")
     @Type(type="org.hibernate.type.UUIDCharType")
     private final UUID gameId;
 
-    // index of GameEntry
-    @Column(name = "progress")
-    private int progress;
+    @Column(name = "userid")
+    @Type(type="org.hibernate.type.UUIDCharType")
+    private UUID userId;
 
-    @Column(name = "numentries")
-    private final int numEntries;
+    @Column(name = "deckid")
+    @Type(type="org.hibernate.type.UUIDCharType")
+    private UUID deckId;
+
+    @Column(name = "finished")
+    private boolean finished = false;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "gameentry", joinColumns = @JoinColumn(name = "gameid"))
+    @CollectionTable(name = "reviewentry", joinColumns = @JoinColumn(name = "gameid"))
     @Column(name = "entryid") // column in the collection table
-    private Set<Integer> chosenEntries;
+    private Set<Integer> entriesToReview;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "gamecorrectentry", joinColumns = @JoinColumn(name = "gameid"))
-    @Column(name = "entryid") // column in the collection table
-    private Set<Integer> correctEntries;
-
-    public CardReviewGame(int progress, int numEntries, Set<Integer> entries, Set<Integer> correctEntries) {
+    public CardReviewGame(UUID userId, UUID deckId, Set<Integer> entriesToReview) {
         gameId = UUID.randomUUID();
-        this.progress = progress;
-        this.numEntries = numEntries;
-        this.chosenEntries = entries;
-        this.correctEntries = correctEntries;
+        this.userId = userId;
+        this.deckId = deckId;
+        this.entriesToReview = entriesToReview;
     }
     public CardReviewGame() {
-        this(0, 0, new HashSet<>(), new HashSet<>());
+        this(null, null, new HashSet<>());
+    }
+
+    public void finish(){
+        finished = true;
     }
 
     public UUID getGameId() {
         return gameId;
     }
 
-    public int getNumEntries() {
-        return numEntries;
+    public UUID getUserId() {
+        return userId;
     }
 
-    public int getProgress() {
-        return progress;
+    public UUID getDeckId() {
+        return deckId;
     }
 
-    public void addProgress() {
-        progress++;
+    public boolean isFinished() {
+        return finished;
     }
 
-    public Set<Integer> getChosenEntries() {
-        return chosenEntries;
-    }
-
-    public void setChosenEntries(Set<Integer> chosenEntries) {
-        this.chosenEntries = chosenEntries;
-    }
-
-    public Set<Integer> getCorrectEntries() {
-        return correctEntries;
-    }
-
-    public void setCorrectEntries(Set<Integer> correctEntries) {
-        this.correctEntries = correctEntries;
+    public Set<Integer> getEntriesToReview() {
+        return entriesToReview;
     }
 }

@@ -12,8 +12,6 @@ import java.util.UUID;
 public interface FlashCardsDao {
     Optional<FlashCardDeck> getDeckFromUUID(UUID deckId);
 
-    List<FlashCardDeck> getAllDecks();
-
     boolean existDeckWithUUID(UUID deckId);
 
     List<FlashCardDeck> findDecksFromIds(List<UUID> deckIds);

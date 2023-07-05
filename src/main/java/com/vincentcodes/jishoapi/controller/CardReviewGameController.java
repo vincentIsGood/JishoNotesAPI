@@ -1,36 +1,52 @@
 package com.vincentcodes.jishoapi.controller;
 
 import com.vincentcodes.jishoapi.entity.CardReviewGame;
+import com.vincentcodes.jishoapi.service.CardReviewGameService;
 import org.hibernate.cfg.NotYetImplementedException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
 import java.util.UUID;
 
-@Deprecated
 @CrossOrigin
 @RestController
 @RequestMapping("jishonotes/v1/games")
 public class CardReviewGameController {
-    // create
-    @GetMapping("/create")
-    public CardReviewGame createGame(){
-        throw new NotYetImplementedException();
+    @Autowired
+    private CardReviewGameService service;
+
+    // TODO: before creating a new game, find a game which haven't finished yet?
+    @PostMapping("/create")
+    public CardReviewGame createGame(@RequestParam("deck") UUID deckId){
+        CardReviewGame game = service.createGame(deckId);
+        if(game == null)
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Cannot create game");
+        return game;
     }
 
-    @PostMapping("/check")
-    public boolean check(@RequestBody String userAnswer){
-        throw new NotYetImplementedException();
+    @GetMapping("/")
+    public List<CardReviewGame> getGames(){
+        return service.getGames();
     }
 
-    // retrieve
     @GetMapping("/{uuid}")
     public CardReviewGame getGame(@PathVariable("uuid") UUID gameId){
-        throw new NotYetImplementedException();
+        CardReviewGame game = service.getGame(gameId);
+        if(game == null)
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Cannot find the specified game");
+        return game;
     }
 
-    // delete
+    @PostMapping("/finish")
+    public void finishGame(@RequestParam("uuid") UUID gameId){
+        service.finishGame(gameId);
+    }
+
     @DeleteMapping("/{uuid}")
     public void deleteGame(@PathVariable("uuid") UUID gameId){
-        throw new NotYetImplementedException();
+        service.deleteGame(gameId);
     }
 }

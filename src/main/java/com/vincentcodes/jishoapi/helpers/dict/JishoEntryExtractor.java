@@ -11,10 +11,7 @@ import com.vincentcodes.jishoapi.entity.jmdict.RawJishoEntry;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -110,6 +107,19 @@ public class JishoEntryExtractor {
      */
     public List<JishoEntry> lookupExactEntries(String searchString){
         List<JishoEntry> result = new ArrayList<>();
+        if(searchString.indexOf('(') != -1 && searchString.lastIndexOf(')') != -1){
+            // eg. いち(位置)
+            int parenthesisIndex = searchString.indexOf('(');
+            String reading = searchString.substring(0, parenthesisIndex);
+            String kanjiRead = searchString.substring(parenthesisIndex+1, searchString.indexOf(')'));
+            for(JishoEntry entry : idToEntryMap.values()){
+                if(stringArrayItemEquals(entry.getHeadword(), kanjiRead)
+                && stringArrayItemEquals(entry.getReadings(), reading)){
+                    result.add(entry);
+                }
+            }
+            return result;
+        }
         for(JishoEntry entry : idToEntryMap.values()){
             if(stringArrayItemEquals(entry.getHeadword(), searchString)
             || stringArrayItemEquals(entry.getReadings(), searchString)){

@@ -1,5 +1,7 @@
 package com.vincentcodes.jishoapi.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.vincentcodes.jishoapi.sterotype.DtoAsWell;
 import org.hibernate.annotations.Type;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,6 +21,7 @@ import java.util.UUID;
 @DtoAsWell
 @Entity
 @Table(name = "appuser")
+@JsonView({AppUser.ALL.class, AppUser.CENSORED.class})
 public class AppUser implements Serializable {
     @Id
     @Type(type="org.hibernate.type.UUIDCharType")
@@ -27,9 +30,9 @@ public class AppUser implements Serializable {
 
     private String name;
 
-    // private String displayName; // use this if the person is an oauth user
-
     private String pass;
+
+    //private String desc;
 
     @Column(name = "can_userpass")
     private boolean canUserPassLogin = true;
@@ -69,11 +72,12 @@ public class AppUser implements Serializable {
         return name;
     }
 
+    @JsonView({AppUser.ALL.class})
     public String getPass() {
         return pass;
     }
 
-    public boolean allowUserPassLogin(){
+    public boolean getAllowUserPassLogin(){
         return canUserPassLogin;
     }
 
@@ -86,4 +90,7 @@ public class AppUser implements Serializable {
                 ", canUserPassLogin=" + canUserPassLogin +
                 '}';
     }
+
+    public static class ALL{}
+    public static class CENSORED{}
 }
