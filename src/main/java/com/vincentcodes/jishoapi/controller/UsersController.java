@@ -24,21 +24,14 @@ public class UsersController {
 
     @GetMapping("/loginstatus")
     public ResponseEntity<Void> amILoggedIn(){
-        return isLoggedIn()? ResponseEntity.ok(null) : ResponseEntity.badRequest().build();
+        return authContext.isLoggedIn()? ResponseEntity.ok(null) : ResponseEntity.badRequest().build();
     }
 
     @GetMapping("/info")
     @JsonView({AppUser.CENSORED.class})
     public AppUser getUserInfo(){
-        if(!isLoggedIn())
+        if(!authContext.isLoggedIn())
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You are not logged in");
         return ((AppUserObtainable) authContext.getAuthentication().getPrincipal()).getAppUser();
-    }
-
-    private boolean isLoggedIn(){
-        Authentication authentication = authContext.getAuthentication();
-        if(authentication instanceof AnonymousAuthenticationToken || !authentication.isAuthenticated())
-            return false;
-        return authentication.getPrincipal() instanceof AppUserObtainable;
     }
 }

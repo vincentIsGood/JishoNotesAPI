@@ -38,7 +38,7 @@ public class SafeFlashCardsService {
         if(flashCardsRepo.existDeckWithUUID(deck.getDeckId()))
             throw new DuplicateResourceNotAllowed();
         FlashCardDeck newDeck = flashCardsRepo.createDeck(deck.getName());
-        userDecksRepo.save(new UserDecks(getLoggedInUserId(), newDeck.getDeckId()));
+        userDecksRepo.save(new UserDecks(authContext.getLoggedInUserId(), newDeck.getDeckId()));
         return newDeck;
     }
 
@@ -46,7 +46,7 @@ public class SafeFlashCardsService {
         if(flashCardsRepo.existDeckWithUUID(deck.getDeckId()))
             throw new DuplicateResourceNotAllowed();
         FlashCardDeck newDeck = flashCardsRepo.addDeck(deck);
-        userDecksRepo.save(new UserDecks(getLoggedInUserId(), newDeck.getDeckId()));
+        userDecksRepo.save(new UserDecks(authContext.getLoggedInUserId(), newDeck.getDeckId()));
         return newDeck;
     }
 
@@ -69,7 +69,7 @@ public class SafeFlashCardsService {
         List<UserDecks> userDecks = getUserDecks();
         if(userDecks.isEmpty())
             return List.of();
-        List<UserDecks> deckIds = userDecksRepo.findByUserId(getLoggedInUserId());
+        List<UserDecks> deckIds = userDecksRepo.findByUserId(authContext.getLoggedInUserId());
         return flashCardsRepo.findDecksFromIds(deckIds.stream().map(UserDecks::getDeckId).collect(Collectors.toList()));
     }
 
@@ -90,18 +90,8 @@ public class SafeFlashCardsService {
         deckFromUUID.get().getReviewedCards().clear();
     }
 
-    private AppUserObtainable getLoggedInUserInfo(){
-        if(authContext.getAuthentication().getPrincipal() instanceof AppUserObtainable)
-            return (AppUserObtainable) authContext.getAuthentication().getPrincipal();
-        throw new InvalidOperation("User is not authorized");
-    }
-
-    private UUID getLoggedInUserId(){
-        return getLoggedInUserInfo().getAppUser().getUserId();
-    }
-
     private List<UserDecks> getUserDecks(){
-        return userDecksRepo.findByUserId(getLoggedInUserId());
+        return userDecksRepo.findByUserId(authContext.getLoggedInUserId());
     }
 
     private void verifyIfDeckBelongsToUser(UUID deckId){

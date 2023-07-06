@@ -49,4 +49,9 @@ public class CardReviewGameController {
     public void deleteGame(@PathVariable("uuid") UUID gameId){
         service.deleteGame(gameId);
     }
+
+    @PostMapping("/delete/unfinished")
+    public void deleteUnfinishedGames(){
+        service.deleteUnfinishedGames();
+    }
 }

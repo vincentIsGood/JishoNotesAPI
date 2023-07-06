@@ -10,7 +10,6 @@ import com.vincentcodes.jishoapi.repository.FlashCardsCrudDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -39,11 +38,11 @@ public class CardReviewGameService {
             emptyGame.finish();
             return emptyGame;
         }
-        return gameRepo.save(new CardReviewGame(getLoggedInUserId(), deckId, randomEntries));
+        return gameRepo.save(new CardReviewGame(authContext.getLoggedInUserId(), deckId, randomEntries));
     }
 
     public List<CardReviewGame> getGames(){
-        return gameRepo.findByUserId(getLoggedInUserId());
+        return gameRepo.findByUserId(authContext.getLoggedInUserId());
     }
 
     public CardReviewGame getGame(UUID gameId){
@@ -73,13 +72,7 @@ public class CardReviewGameService {
         gameRepo.deleteById(gameId);
     }
 
-    private AppUserObtainable getLoggedInUserInfo(){
-        if(authContext.getAuthentication().getPrincipal() instanceof AppUserObtainable)
-            return (AppUserObtainable) authContext.getAuthentication().getPrincipal();
-        throw new InvalidOperation("User is not authorized");
-    }
-
-    private UUID getLoggedInUserId(){
-        return getLoggedInUserInfo().getAppUser().getUserId();
+    public void deleteUnfinishedGames(){
+        gameRepo.deleteByFinishedAndUserId(false, authContext.getLoggedInUserId());
     }
 }

@@ -15,4 +15,6 @@ public interface CardReviewGameCrudRepo extends CrudRepository<CardReviewGame, U
 
     //@Query(value = "select * from cardreviewgame where userid = ?1", nativeQuery = true)
     //List<CardReviewGame> findByUserId(String userId);
+
+    void deleteByFinishedAndUserId(boolean finished, UUID userId);
 }
