@@ -44,7 +44,7 @@ public class JpaDatabaseConfig {
 
     @Bean
     @Primary
-    @ConditionalOnExpression("${spring.inmemdb:true}")
+    @ConditionalOnExpression("${spring.inmemdb}")
     public DataSource inMemoryDataSource(){
         LOGGER.warn("Using in-memory database");
         DataSourceBuilder<?> builder = DataSourceBuilder.create();

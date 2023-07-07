@@ -25,6 +25,10 @@ spring:
   inmemdb: false
   dangerous-mode: false
   allowed-origins: ${ALLOWED_ORIGIN} # comma separated
+  use-swagger-ui: false
+  mvc:
+    pathmatch:
+      matching-strategy: ant-path-matcher
   jpa:
     show-sql: false
   session:

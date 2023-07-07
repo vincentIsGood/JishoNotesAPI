@@ -19,6 +19,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -59,6 +60,17 @@ public class WebSecurityConfig {
         return source;
     }
 
+    @Bean
+    public List<String> publicPaths(@Value("${spring.use-swagger-ui}") boolean useSwaggerUi){
+        return new ArrayList<>() {
+            {
+                addAll(ApiEndpoints.Public.PATH_MATCHERS);
+                if(useSwaggerUi)
+                    addAll(ApiEndpoints.Public.SWAGGER_MATCHERS);
+            }
+        };
+    }
+
     // For CORS, see https://stackoverflow.com/questions/54276986/spring-boot-security-no-access-control-allow-origin-header-when-setting-allow
     //           CrossOrigin works when the "Origin" header exists in the request.
     @Bean
@@ -66,7 +78,8 @@ public class WebSecurityConfig {
             HttpSecurity http,
             JsonAuthenticationFilter jsonAuthenticationFilter,
             OAuth2UserService<OAuth2UserRequest, OAuth2User> oAuth2UserService,
-            OAuth2UserService<OidcUserRequest, OidcUser> oidcUserOAuth2UserService) throws Exception{
+            OAuth2UserService<OidcUserRequest, OidcUser> oidcUserOAuth2UserService,
+            @Qualifier("publicPaths") List<String> publicPaths) throws Exception{
         // Do not create session on 401
         // https://stackoverflow.com/questions/70769950/prevent-unauthorized-http-requests-redirected-to-error-from-setting-session-coo
         HttpSessionRequestCache httpSessionRequestCache = new HttpSessionRequestCache();
@@ -86,7 +99,7 @@ public class WebSecurityConfig {
                 .and().sessionManagement()
                     .maximumSessions(2).and()
                 .and().authorizeRequests()
-                    .antMatchers(ApiEndpoints.Public.PATH_MATCHERS.toArray(new String[0]))
+                    .antMatchers(publicPaths.toArray(new String[0]))
                     .permitAll()
                 .anyRequest().authenticated()
                 .and().logout()

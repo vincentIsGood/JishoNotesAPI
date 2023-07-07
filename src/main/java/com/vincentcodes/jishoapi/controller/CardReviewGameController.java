@@ -20,8 +20,9 @@ public class CardReviewGameController {
 
     // TODO: before creating a new game, find a game which haven't finished yet?
     @PostMapping("/create")
-    public CardReviewGame createGame(@RequestParam("deck") UUID deckId){
-        CardReviewGame game = service.createGame(deckId);
+    public CardReviewGame createGame(@RequestParam("deck") UUID deckId,
+                                     @RequestParam(value = "n", defaultValue = "5") int n){
+        CardReviewGame game = service.createGame(deckId, n);
         if(game == null)
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Cannot create game");
         return game;

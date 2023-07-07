@@ -28,11 +28,11 @@ public class CardReviewGameService {
     @Autowired
     private AuthenticationContext authContext;
 
-    public CardReviewGame createGame(UUID deckId){
+    public CardReviewGame createGame(UUID deckId, int numberOfEntries){
         Optional<FlashCardDeck> deckOption = flashCardsCrudDao.findById(deckId);
         if(deckOption.isEmpty()) return null;
 
-        Set<Integer> randomEntries = flashCardsCrudDao.getRandomEntriesExceptReviewed(deckId.toString(), 5);
+        Set<Integer> randomEntries = flashCardsCrudDao.getRandomEntriesExceptReviewed(deckId.toString(), numberOfEntries);
         if(randomEntries.size() == 0){
             CardReviewGame emptyGame = new CardReviewGame();
             emptyGame.finish();

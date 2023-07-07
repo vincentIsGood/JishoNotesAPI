@@ -7,8 +7,17 @@ server:
       cookie:
         same-site: none
 
+# https://stackoverflow.com/questions/39401010/why-is-v2-api-docs-the-default-url-when-using-springfox-and-swagger2
+#springfox:
+#  documentation:
+#    swagger:
+#      v2:
+#        path: /jishonotes/swaggerdocs/v2/api-docs
+
 spring:
-  inmemdb: false
+  inmemdb: true
   dangerous-mode: true
+  use-swagger-ui: false
   jpa:
+    show-sql: false
     generate-ddl: true

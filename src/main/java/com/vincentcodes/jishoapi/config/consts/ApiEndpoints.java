@@ -30,6 +30,13 @@ public final class ApiEndpoints {
                 "/jishonotes/v1/users/loginstatus",
                 OAUTH2_GENERAL_LOGIN_URL
         );
+
+        public final static List<String> SWAGGER_MATCHERS = List.of(
+                // https://stackoverflow.com/questions/47425048/why-does-springfox-swagger2-ui-tell-me-unable-to-infer-base-url
+                "/swagger-ui/**",
+                "/swagger-resources/**",
+                "/v2/api-docs"
+        );
     }
 
     // Actively used (ie. not deprecated) endpoints
