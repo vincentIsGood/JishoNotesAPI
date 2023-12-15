@@ -58,4 +58,5 @@ atlassian-ide-plugin.xml
 /elastic*/
 /0_*
 /secret*
+/logs
 application-*prod*.yml

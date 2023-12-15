@@ -1,10 +1,10 @@
 package com.vincentcodes.jishoapi.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
+@Deprecated
 @CrossOrigin
 @RestController
 @RequestMapping("jishonotes/v1/gpt")
@@ -14,7 +14,8 @@ public class GptTextController {
 
     @GetMapping
     public String generate(@RequestParam("prompt") String prompt){
-        ResponseEntity<String> gptResponse = restTemplate.getForEntity("http://gpt.service.jisho:8080/gpt?prompt={prompt}", String.class, prompt);
-        return gptResponse.getBody();
+        return "";
+        //ResponseEntity<String> gptResponse = restTemplate.getForEntity("http://gpt.service.jisho:8080/gpt?prompt={prompt}", String.class, prompt);
+        //return gptResponse.getBody();
     }
 }

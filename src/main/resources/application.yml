@@ -17,6 +17,20 @@ server:
 #    key-store-password: whatever
 #    key-alias: whatever
 
+# https://docs.spring.io/spring-boot/docs/current/reference/html/features.html#features.logging
+# https://stackoverflow.com/questions/39158191/default-logging-file-for-spring-boot-application
+#
+# define ${LOG_DIRECTORY}
+#
+## Old
+#logging:
+#  file:
+##    path: ${LOG_DIRECTORY}
+#    name: ${LOG_DIRECTORY}/vws.log
+#  level:
+#    root: INFO
+#    com.vincentcodes: INFO
+
 external:
   dict:
     jmdict_path: ./dict/JMdict_e
