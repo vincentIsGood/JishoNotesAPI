@@ -23,6 +23,7 @@ public final class ApiEndpoints {
 
     public final static class Public{
         public final static List<String> PATH_MATCHERS = List.of(
+                "/public/**",
                 "/jishonotes/v2/notes/**",
                 "/jishonotes/v2/entries/**",
                 "/jishonotes/v1/analyze/**",
