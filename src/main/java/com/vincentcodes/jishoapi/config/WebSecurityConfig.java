@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
@@ -97,7 +98,9 @@ public class WebSecurityConfig {
                 .and().csrf().disable()
                 .requestCache().requestCache(httpSessionRequestCache)
                 .and().sessionManagement()
-                    .maximumSessions(2).and()
+                    .maximumSessions(2)
+                    .and()
+                    //.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED) // default
                 .and().authorizeRequests()
                     .antMatchers(publicPaths.toArray(new String[0]))
                     .permitAll()

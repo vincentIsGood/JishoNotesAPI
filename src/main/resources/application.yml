@@ -53,6 +53,8 @@ spring:
   jpa:
     show-sql: false
   session:
+    jdbc:
+      initialize-schema: never # always, embedded, never
     store-type: jdbc
   security:
     oauth2:
